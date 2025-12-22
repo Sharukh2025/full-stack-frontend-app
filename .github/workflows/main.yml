@@ -1,7 +1,11 @@
-name: CD - Manual Deployment
+name: CI/CD - Push to Main
 
 on:
-  workflow_dispatch:
+  push:
+    branches:
+      - production
+      - staging
+      - development
 
 jobs:
   ci:
@@ -13,7 +17,7 @@ jobs:
         with:
           node-version: 18
       - run: npm install
-      - run: npm run build
+      - run: CI=false npm run build
       - run: npm test
 
   cd:
