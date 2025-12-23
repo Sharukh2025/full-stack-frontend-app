@@ -45,6 +45,9 @@ jobs:
           name: build
           path: build/
 
+      - name: Install Vercel CLI
+        run: npm install -g vercel
+
       - name: Deploy based on branch
         run: |
           if [ "${GITHUB_REF##*/}" == "production" ]; then
