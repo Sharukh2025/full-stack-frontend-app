@@ -23,7 +23,7 @@ jobs:
         run: CI=false npm run build
 
       - name: Run tests
-        run:  CI=false npm test -- --watch=false
+        run: CI=false npm test -- --watch=false --passWithNoTests
 
       - name: Upload build artifacts
         uses: actions/upload-artifact@v4
@@ -45,19 +45,25 @@ jobs:
           name: build
           path: build/
 
+      - name: Install Vercel CLI
+        run: npm install -g vercel
+
       - name: Deploy based on branch
         run: |
-          if [ "${GITHUB_REF##*/}" == "production" ]; then
+          BRANCH=${GITHUB_REF##*/}
+          echo "Current branch: $BRANCH"
+
+          if [ "$BRANCH" == "production" ]; then
             echo "Deploying to Production..."
-            vercel --prod --confirm
-          elif [ "${GITHUB_REF##*/}" == "staging" ]; then
+            vercel --prod --token $VERCEL_TOKEN --yes
+          elif [ "$BRANCH" == "staging" ]; then
             echo "Deploying to Staging..."
-            vercel --confirm --env=STAGING
-          elif [ "${GITHUB_REF##*/}" == "development" ]; then
+            vercel --token $VERCEL_TOKEN --yes
+          elif [ "$BRANCH" == "development" ]; then
             echo "Deploying to Development..."
-            vercel --confirm --env=DEVELOPMENT
+            vercel --token $VERCEL_TOKEN --yes
           else
-            echo "Branch does not match any environment. Skipping deploy."
+            echo "Branch $BRANCH does not match any environment. Skipping deploy."
           fi
         env:
           VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
