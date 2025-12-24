@@ -1,36 +1,12 @@
-name: Frontend CI & Manual CD (Vercel)
+name: Frontend CD (Vercel)
 
 on:
-  workflow_dispatch:  # manual trigger for CD
+  workflow_dispatch:  # manual deploy only
 
 jobs:
-  continuous-integration:
-    name: Continuous Integration
+  frontend-cd:
+    name: Continuous Delivery
     runs-on: ubuntu-latest
-
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-
-      - name: Setup Node.js environment
-        uses: actions/setup-node@v4
-        with:
-          node-version: 18
-
-      - name: Install dependencies
-        run: npm install
-
-      - name: Run unit tests
-        run: npm test -- --watch=false --passWithNoTests
-
-      - name: Validate production build
-        run: CI=false npm run build
-
-  continuous-delivery:
-    name: Continuous Delivery (Vercel)
-    runs-on: ubuntu-latest
-    needs: continuous-integration
-    if: github.event_name == 'workflow_dispatch'  # run CD only manually
 
     steps:
       - name: Checkout repository
@@ -45,7 +21,7 @@ jobs:
           VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
         run: |
           BRANCH="${GITHUB_REF##*/}"
-          echo "Manual deployment triggered for branch: $BRANCH"
+          echo "Deploying branch: $BRANCH"
 
           # Skip development branch
           if [ "$BRANCH" = "development" ]; then

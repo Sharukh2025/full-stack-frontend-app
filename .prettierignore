@@ -1,0 +1,25 @@
+# Node / dependencies
+node_modules
+
+# CRA build output
+build
+public
+
+# Docker
+Dockerfile.dev
+.dockerignore
+docker-compose.yml
+
+# Env files
+.env
+
+# Git
+.git
+.github
+
+# Lock files
+package-lock.json
+yarn.lock
+
+# Misc
+README.md
