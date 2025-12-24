@@ -1,0 +1,40 @@
+# Use official Node.js 20 image (Alpine = smaller, faster image)
+FROM node:20-alpine
+
+# Set the working directory inside the container to /app
+# All following commands will run from this directory
+WORKDIR /app
+
+# Copy package.json and package-lock.json to the container
+# This allows Docker to cache npm install if dependencies don't change
+COPY package*.json ./
+
+# Install all npm dependencies inside the container
+RUN npm install
+
+# Copy the rest of the application source code into the container
+# This includes src/, public/, etc.
+COPY . .
+
+# Expose port 3000 so Docker can map it to the host machine
+# CRA (Create React App) runs on port 3000 by default
+EXPOSE 3000
+
+# Command to start the React development server
+# Enables hot reload when files change
+CMD ["npm", "start"]
+
+# ------------------------------
+# Manual build command (optional)
+# Builds the image using this Dockerfile
+# docker build -f Dockerfile.dev -t cra-dev .
+# ------------------------------
+
+# ------------------------------
+# Manual run command (optional)
+# -p 3000:3000           -> maps container port to host
+# -v ${PWD}:/app         -> mounts source code for hot reload
+# -v /app/node_modules   -> keeps node_modules inside container
+# --env-file .env        -> loads environment variables
+# docker run -it -p 3000:3000 -v ${PWD}:/app -v /app/node_modules --env-file .env cra-dev
+# ------------------------------
